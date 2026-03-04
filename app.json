@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "SmartHeal Dashboard",
+    "slug": "smartheal-dashboard",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "scheme": "smartheal",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#030213"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.smartheal.dashboard"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#030213"
+      },
+      "package": "com.smartheal.dashboard"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
