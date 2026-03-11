@@ -1,7 +1,7 @@
 
   # SmartHeal Dashboard Deployment
 
-  This is a code bundle for SmartHeal Dashboard Deployment. The original project is available at https://www.figma.com/design/QDks7nUZkf3CcHL4qHN9A7/SmartHeal-Dashboard-Deployment.
+  This is a code bundle for SmartHeal Dashboard Deployment. The original project is available at [https://www.figma.com/design/QDks7nUZkf3CcHL4qHN9A7/SmartHeal-Dashboard-Deployment.](https://vertex-smoke-97812660.figma.site)
 
   ## Running the code
 
