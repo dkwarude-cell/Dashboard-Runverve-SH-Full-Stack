@@ -22,6 +22,8 @@ const SECTION_TO_ROUTE: Record<AppSection, string> = {
   communications: '/(app)/communications',
   queries: '/(app)/queries',
   company: '/(app)/company',
+  'ai-assistant': '/(app)/ai-assistant',
+  settings: '/(app)/settings',
 };
 
 const ROUTE_TO_SECTION: Record<string, AppSection> = {
@@ -34,6 +36,8 @@ const ROUTE_TO_SECTION: Record<string, AppSection> = {
   'communications': 'communications',
   'queries': 'queries',
   'company': 'company',
+  'ai-assistant': 'ai-assistant',
+  'settings': 'settings',
 };
 
 export default function AppLayout() {

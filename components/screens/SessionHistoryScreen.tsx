@@ -41,9 +41,9 @@ const priorityVariant = (priority: string) => {
 
 // Demo client names mapped to sessions
 const CLIENT_NAMES: Record<string, { name: string; type: string }> = {
-  'ITT Therapy': { name: 'Sarah Johnson', type: 'ITT Therapy' },
-  'Recovery': { name: 'Michael Chen', type: 'Recovery' },
-  'Assessment': { name: 'James Wilson', type: 'Assessment' },
+  'ITT Therapy': { name: 'Priya Sharma', type: 'ITT Therapy' },
+  'Recovery': { name: 'Arjun Patel', type: 'Recovery' },
+  'Assessment': { name: 'Vikram Reddy', type: 'Assessment' },
 };
 
 export default function SessionHistoryScreen() {

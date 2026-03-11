@@ -21,10 +21,10 @@ import { useAuth } from '@/lib/auth';
 import { useResponsive } from '@/hooks/useResponsive';
 
 const DEMO_SCHEDULE = [
-  { name: 'Sarah Johnson', type: 'ITT Therapy', time: '10:00 AM', color: '#d4183d' },
-  { name: 'Michael Chen', type: 'Recovery Session', time: '11:30 AM', color: '#d4183d' },
-  { name: 'Emma Davis', type: 'Assessment', time: '02:00 PM', color: '#d4183d' },
-  { name: 'James Wilson', type: 'ITT Therapy', time: '03:30 PM', color: '#d4183d' },
+  { name: 'Priya Sharma', type: 'ITT Therapy', time: '10:00 AM', color: '#d4183d' },
+  { name: 'Arjun Patel', type: 'Recovery Session', time: '11:30 AM', color: '#d4183d' },
+  { name: 'Ananya Iyer', type: 'Assessment', time: '02:00 PM', color: '#d4183d' },
+  { name: 'Vikram Reddy', type: 'ITT Therapy', time: '03:30 PM', color: '#d4183d' },
 ];
 
 const DEMO_CHART_DATA = [
@@ -44,7 +44,7 @@ export default function DashboardScreen() {
   const { isMobile, isDesktop } = useResponsive();
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const displayName = profile?.full_name || user?.email?.split('@')[0] || 'Dr. Smith';
+  const displayName = profile?.full_name || user?.email?.split('@')[0] || 'Dr. Verma';
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -94,7 +94,7 @@ export default function DashboardScreen() {
           <View style={styles.welcomeTextArea}>
             <Text style={styles.welcomeTitle}>Welcome back, {displayName}</Text>
             <Text style={styles.welcomeSubtitle}>
-              You have 12 sessions scheduled today
+              You have {schedule.length} sessions scheduled today
             </Text>
           </View>
         </View>

@@ -64,22 +64,22 @@ interface ChatMessage {
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 
 const CONTACTS: Contact[] = [
-  { id: '1', name: 'Sarah Johnson', role: 'client', avatar_color: '#ef4444', online: true, lastMessage: 'Thank you for the session update!', lastTime: 'Now', unread: 3, email: 'sarah.j@email.com', phone: '+1 (555) 234-5678', location: 'New York, NY', joinDate: 'Jan 2025', condition: 'Knee Rehabilitation' },
-  { id: '2', name: 'Dr. Michael Chen', role: 'staff', avatar_color: '#3b82f6', online: true, lastMessage: 'I\'ll review the case files today', lastTime: '2m', unread: 1, email: 'dr.chen@smartheal.io', phone: '+1 (555) 345-6789', location: 'San Francisco, CA', joinDate: 'Mar 2024' },
-  { id: '3', name: 'Emma Davis', role: 'client', avatar_color: '#8b5cf6', online: false, lastMessage: 'Can we reschedule my Thursday session?', lastTime: '15m', unread: 0, email: 'emma.d@email.com', phone: '+1 (555) 456-7890', location: 'Chicago, IL', joinDate: 'Jun 2025', condition: 'Shoulder Recovery' },
-  { id: '4', name: 'Dr. James Wilson', role: 'staff', avatar_color: '#10b981', online: true, lastMessage: 'The new protocol looks promising', lastTime: '1h', unread: 0, email: 'dr.wilson@smartheal.io', phone: '+1 (555) 567-8901', location: 'Boston, MA', joinDate: 'Feb 2024' },
-  { id: '5', name: 'Lisa Anderson', role: 'client', avatar_color: '#f59e0b', online: true, lastMessage: 'My pain levels have decreased significantly', lastTime: '2h', unread: 2, email: 'lisa.a@email.com', phone: '+1 (555) 678-9012', location: 'Austin, TX', joinDate: 'Sep 2025', condition: 'Lower Back Therapy' },
-  { id: '6', name: 'Robert Taylor', role: 'client', avatar_color: '#06b6d4', online: false, lastMessage: 'When should I start the new exercises?', lastTime: '3h', unread: 0, email: 'robert.t@email.com', phone: '+1 (555) 789-0123', location: 'Seattle, WA', joinDate: 'Nov 2025', condition: 'Post-Surgery Rehab' },
-  { id: '7', name: 'Dr. Emily Brown', role: 'staff', avatar_color: '#ec4899', online: false, lastMessage: 'Patient charts have been updated', lastTime: '5h', unread: 0, email: 'dr.brown@smartheal.io', phone: '+1 (555) 890-1234', location: 'Denver, CO', joinDate: 'Aug 2024' },
-  { id: '8', name: 'Mark Thompson', role: 'client', avatar_color: '#14b8a6', online: true, lastMessage: 'Thanks for adjusting the device settings', lastTime: '1d', unread: 0, email: 'mark.t@email.com', phone: '+1 (555) 901-2345', location: 'Portland, OR', joinDate: 'Dec 2025', condition: 'Muscle Recovery' },
-  { id: '9', name: 'Dr. Amanda Lee', role: 'staff', avatar_color: '#a855f7', online: true, lastMessage: 'Team meeting notes attached', lastTime: '1d', unread: 4, email: 'dr.lee@smartheal.io', phone: '+1 (555) 012-3456', location: 'Miami, FL', joinDate: 'May 2024' },
-  { id: '10', name: 'Kevin Wright', role: 'client', avatar_color: '#f97316', online: false, lastMessage: 'Feeling much better this week!', lastTime: '2d', unread: 0, email: 'kevin.w@email.com', phone: '+1 (555) 123-4567', location: 'Dallas, TX', joinDate: 'Feb 2026', condition: 'Chronic Pain Management' },
+  { id: '1', name: 'Priya Sharma', role: 'client', avatar_color: '#ef4444', online: true, lastMessage: 'Thank you for the session update!', lastTime: 'Now', unread: 3, email: 'priya.sharma@email.com', phone: '+91 98765 43210', location: 'Mumbai, MH', joinDate: 'Jan 2025', condition: 'Knee Rehabilitation' },
+  { id: '2', name: 'Dr. Arjun Patel', role: 'staff', avatar_color: '#3b82f6', online: true, lastMessage: 'I\'ll review the case files today', lastTime: '2m', unread: 1, email: 'dr.patel@smartheal.io', phone: '+91 87654 32109', location: 'Ahmedabad, GJ', joinDate: 'Mar 2024' },
+  { id: '3', name: 'Ananya Iyer', role: 'client', avatar_color: '#8b5cf6', online: false, lastMessage: 'Can we reschedule my Thursday session?', lastTime: '15m', unread: 0, email: 'ananya.iyer@email.com', phone: '+91 76543 21098', location: 'Chennai, TN', joinDate: 'Jun 2025', condition: 'Shoulder Recovery' },
+  { id: '4', name: 'Dr. Vikram Reddy', role: 'staff', avatar_color: '#10b981', online: true, lastMessage: 'The new protocol looks promising', lastTime: '1h', unread: 0, email: 'dr.reddy@smartheal.io', phone: '+91 65432 10987', location: 'Hyderabad, TS', joinDate: 'Feb 2024' },
+  { id: '5', name: 'Meera Nair', role: 'client', avatar_color: '#f59e0b', online: true, lastMessage: 'My pain levels have decreased significantly', lastTime: '2h', unread: 2, email: 'meera.nair@email.com', phone: '+91 54321 09876', location: 'Kochi, KL', joinDate: 'Sep 2025', condition: 'Lower Back Therapy' },
+  { id: '6', name: 'Rohan Gupta', role: 'client', avatar_color: '#06b6d4', online: false, lastMessage: 'When should I start the new exercises?', lastTime: '3h', unread: 0, email: 'rohan.gupta@email.com', phone: '+91 43210 98765', location: 'Delhi, DL', joinDate: 'Nov 2025', condition: 'Post-Surgery Rehab' },
+  { id: '7', name: 'Dr. Kavya Menon', role: 'staff', avatar_color: '#ec4899', online: false, lastMessage: 'Patient charts have been updated', lastTime: '5h', unread: 0, email: 'dr.menon@smartheal.io', phone: '+91 32109 87654', location: 'Bengaluru, KA', joinDate: 'Aug 2024' },
+  { id: '8', name: 'Aditya Joshi', role: 'client', avatar_color: '#14b8a6', online: true, lastMessage: 'Thanks for adjusting the device settings', lastTime: '1d', unread: 0, email: 'aditya.joshi@email.com', phone: '+91 21098 76543', location: 'Pune, MH', joinDate: 'Dec 2025', condition: 'Muscle Recovery' },
+  { id: '9', name: 'Dr. Deepika Singh', role: 'staff', avatar_color: '#a855f7', online: true, lastMessage: 'Team meeting notes attached', lastTime: '1d', unread: 4, email: 'dr.singh@smartheal.io', phone: '+91 10987 65432', location: 'Jaipur, RJ', joinDate: 'May 2024' },
+  { id: '10', name: 'Rajesh Kumar', role: 'client', avatar_color: '#f97316', online: false, lastMessage: 'Feeling much better this week!', lastTime: '2d', unread: 0, email: 'rajesh.kumar@email.com', phone: '+91 99887 76655', location: 'Lucknow, UP', joinDate: 'Feb 2026', condition: 'Chronic Pain Management' },
 ];
 
 const MOCK_MESSAGES: Record<string, ChatMessage[]> = {
   '1': [
-    { id: 'm1', contactId: '1', text: 'Hi Dr. Smith, I wanted to discuss my treatment progress from last week.', time: '10:15 AM', isOwn: false },
-    { id: 'm2', contactId: '1', text: 'Of course, Sarah! I reviewed your session data and I\'m very pleased with your progress.', time: '10:17 AM', isOwn: true },
+    { id: 'm1', contactId: '1', text: 'Namaste Doctor, I wanted to discuss my treatment progress from last week.', time: '10:15 AM', isOwn: false },
+    { id: 'm2', contactId: '1', text: 'Of course, Priya! I reviewed your session data and I\'m very pleased with your progress.', time: '10:17 AM', isOwn: true },
     { id: 'm3', contactId: '1', text: 'That\'s great to hear! I\'ve been following the exercise plan you recommended.', time: '10:18 AM', isOwn: false },
     { id: 'm4', contactId: '1', text: 'Your pain levels have decreased by 30% since we started. Let\'s schedule a follow-up session to adjust the treatment intensity.', time: '10:20 AM', isOwn: true },
     { id: 'm5', contactId: '1', text: 'That sounds perfect. Are there any openings this Thursday?', time: '10:22 AM', isOwn: false },
@@ -87,31 +87,31 @@ const MOCK_MESSAGES: Record<string, ChatMessage[]> = {
     { id: 'm7', contactId: '1', text: 'Thank you for the session update!', time: '10:25 AM', isOwn: false },
   ],
   '2': [
-    { id: 'm8', contactId: '2', text: 'Hey Mike, did you get a chance to look at the new treatment protocols?', time: '9:00 AM', isOwn: true },
+    { id: 'm8', contactId: '2', text: 'Hey Arjun, did you get a chance to look at the new treatment protocols?', time: '9:00 AM', isOwn: true },
     { id: 'm9', contactId: '2', text: 'Yes, the SmartHeal Pro integration looks excellent. The intensity calibration is much more precise.', time: '9:05 AM', isOwn: false },
     { id: 'm10', contactId: '2', text: 'Great. Can you share your analysis with the team by end of day?', time: '9:07 AM', isOwn: true },
     { id: 'm11', contactId: '2', text: 'I\'ll review the case files today', time: '9:10 AM', isOwn: false },
   ],
   '3': [
-    { id: 'm12', contactId: '3', text: 'Good morning Emma! How is your shoulder feeling this week?', time: '11:00 AM', isOwn: true },
+    { id: 'm12', contactId: '3', text: 'Good morning Ananya! How is your shoulder feeling this week?', time: '11:00 AM', isOwn: true },
     { id: 'm13', contactId: '3', text: 'It\'s improving steadily. The range of motion exercises are really helping.', time: '11:15 AM', isOwn: false },
     { id: 'm14', contactId: '3', text: 'Wonderful! Keep up the great work. Your next session is Thursday at 3 PM.', time: '11:18 AM', isOwn: true },
     { id: 'm15', contactId: '3', text: 'Can we reschedule my Thursday session?', time: '11:30 AM', isOwn: false },
   ],
   '5': [
-    { id: 'm16', contactId: '5', text: 'Good morning Lisa! How are you feeling after yesterday\'s session?', time: '8:00 AM', isOwn: true },
+    { id: 'm16', contactId: '5', text: 'Good morning Meera! How are you feeling after yesterday\'s session?', time: '8:00 AM', isOwn: true },
     { id: 'm17', contactId: '5', text: 'Much better! The new frequency setting made a huge difference.', time: '8:15 AM', isOwn: false },
     { id: 'm18', contactId: '5', text: 'That\'s wonderful to hear. Your adherence score is at 94% this month.', time: '8:17 AM', isOwn: true },
     { id: 'm19', contactId: '5', text: 'My pain levels have decreased significantly', time: '8:30 AM', isOwn: false },
   ],
   '4': [
-    { id: 'm20', contactId: '4', text: 'James, the Phase 2 trial results are in. Significant improvement in recovery times.', time: 'Yesterday', isOwn: true },
+    { id: 'm20', contactId: '4', text: 'Vikram, the Phase 2 trial results are in. Significant improvement in recovery times.', time: 'Yesterday', isOwn: true },
     { id: 'm21', contactId: '4', text: 'That\'s excellent news. The SmartHeal protocol adjustments appear to be working.', time: 'Yesterday', isOwn: false },
     { id: 'm22', contactId: '4', text: 'Let\'s present these findings at the next board meeting.', time: 'Yesterday', isOwn: true },
     { id: 'm23', contactId: '4', text: 'The new protocol looks promising', time: 'Yesterday', isOwn: false },
   ],
   '9': [
-    { id: 'm24', contactId: '9', text: 'Amanda, the quarterly report is looking great. Client outcomes are up 15%.', time: 'Yesterday', isOwn: true },
+    { id: 'm24', contactId: '9', text: 'Deepika, the quarterly report is looking great. Client outcomes are up 15%.', time: 'Yesterday', isOwn: true },
     { id: 'm25', contactId: '9', text: 'Thanks! I\'ve also included the device utilization metrics. We should discuss during the next team sync.', time: 'Yesterday', isOwn: false },
     { id: 'm26', contactId: '9', text: 'Agreed. I\'ll add it to the agenda.', time: 'Yesterday', isOwn: true },
     { id: 'm27', contactId: '9', text: 'Team meeting notes attached', time: 'Yesterday', isOwn: false },

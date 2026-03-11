@@ -9,10 +9,13 @@ import {
   MessageSquare,
   HelpCircle,
   Building2,
+  Sparkles,
+  Settings,
 } from 'lucide-react-native';
 import { Badge } from '@/components/ui/Badge';
 import { useAuth } from '@/lib/auth';
 import { Button } from '@/components/ui/Button';
+import { useClients } from '@/hooks/useClients';
 import type { AppSection } from '@/types';
 
 interface SidebarProps {
@@ -41,8 +44,13 @@ const commNav: NavItemConfig[] = [
   { key: 'queries', label: 'Query Management', icon: HelpCircle, badge: 'NEW' },
 ];
 
+const aiNav: NavItemConfig[] = [
+  { key: 'ai-assistant', label: 'AI Assistant', icon: Sparkles, badge: 'AI' },
+];
+
 const adminNav: NavItemConfig[] = [
   { key: 'company', label: 'Company Dashboard', icon: Building2, badge: 'NEW' },
+  { key: 'settings', label: 'Settings', icon: Settings },
 ];
 
 function SidebarItem({
@@ -74,6 +82,8 @@ function SidebarItem({
 
 export function Sidebar({ activeSection, onSectionChange, onClose }: SidebarProps) {
   const { signOut } = useAuth();
+  const { clients } = useClients();
+  const activeClientCount = clients.filter(c => c.status === 'Active').length;
 
   const handleNavPress = (section: AppSection) => {
     onSectionChange(section);
@@ -109,6 +119,19 @@ export function Sidebar({ activeSection, onSectionChange, onClose }: SidebarProp
           ))}
         </View>
 
+        {/* AI */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>AI & INSIGHTS</Text>
+          {aiNav.map((item) => (
+            <SidebarItem
+              key={item.key}
+              item={item}
+              active={activeSection === item.key}
+              onPress={() => handleNavPress(item.key)}
+            />
+          ))}
+        </View>
+
         {/* Administration */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>ADMINISTRATION</Text>
@@ -127,8 +150,8 @@ export function Sidebar({ activeSection, onSectionChange, onClose }: SidebarProp
       <View style={styles.footer}>
         <View style={styles.activeClients}>
           <Text style={styles.activeClientsLabel}>Active Clients</Text>
-          <Text style={styles.activeClientsValue}>127</Text>
-          <Text style={styles.activeClientsChange}>↑ 12% this month</Text>
+          <Text style={styles.activeClientsValue}>{activeClientCount || clients.length || '—'}</Text>
+          <Text style={styles.activeClientsChange}>{clients.length > 0 ? `${clients.length} total registered` : 'Loading...'}</Text>
         </View>
         <Button
           title="Sign Out"

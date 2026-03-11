@@ -1,5 +1,5 @@
 import React from 'react';
-import Svg, { Rect, Path, Circle } from 'react-native-svg';
+import Svg, { Rect, Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 
 interface SmartHealLogoProps {
   /** Overall size (width & height) */
@@ -7,21 +7,38 @@ interface SmartHealLogoProps {
 }
 
 /**
- * SmartHeal official logomark – stylised running-person "R" on a red rounded square.
- * Uses the exact SVG paths from the official brand asset.
+ * SmartHeal professional logomark – medical cross silhouette with a heartbeat
+ * pulse cutting through it, on a gradient red rounded-square.
+ * Clean, scalable, works from 20px to 120px.
  */
 export function SmartHealLogo({ size = 32 }: SmartHealLogoProps) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 48 48" accessibilityLabel="SmartHeal logo">
-      <Rect width="48" height="48" rx="8" fill="#EF4444" />
-      <Circle cx="29.5" cy="12.5" r="2.5" fill="white" />
+    <Svg width={size} height={size} viewBox="0 0 64 64" accessibilityLabel="SmartHeal logo">
+      <Defs>
+        <LinearGradient id="bgGrad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+          <Stop offset="0" stopColor="#d4183d" />
+          <Stop offset="1" stopColor="#9b1030" />
+        </LinearGradient>
+      </Defs>
+
+      {/* Background rounded square */}
+      <Rect width="64" height="64" rx="14" fill="url(#bgGrad)" />
+
+      {/* Medical cross — solid white, centred */}
       <Path
-        d="M18 19C18 19 20 19 22 19C23 19 24 19 24.5 18L26.5 15H29.5C29.5 15 28.5 18 28 20C27.5 21.5 26.5 22 25 22H23L21.5 25L24.5 30L26 32H22.5L19 26.5L17.5 31H13.5L16.5 24L18 19Z"
+        d="M24 12h16v16h12v8H40v16H24V36H12v-8h12V12z"
         fill="white"
+        opacity={0.25}
       />
+
+      {/* Heartbeat / ECG pulse — bold & clean across the middle */}
       <Path
-        d="M27.5 21.5L31 23.5L33 27L29.5 25.5L27.5 21.5Z"
-        fill="white"
+        d="M8 34h12l3-10 4 20 4-22 4 18 3-6h2l4 0h12"
+        fill="none"
+        stroke="white"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </Svg>
   );

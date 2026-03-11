@@ -58,8 +58,8 @@ const DEMO_QUERIES: Query[] = [
 ];
 
 const CLIENT_NAMES: Record<string, string> = {
-  c1: 'Sarah Johnson', c2: 'Mike Chen', c3: 'Emma Davis',
-  c4: 'James Wilson', c5: 'Lisa Anderson', c6: 'Robert Taylor',
+  c1: 'Priya Sharma', c2: 'Arjun Patel', c3: 'Ananya Iyer',
+  c4: 'Vikram Reddy', c5: 'Meera Nair', c6: 'Rohan Gupta',
 };
 
 // Infer category from title keywords

@@ -63,9 +63,9 @@ function SliderControl({
 }
 
 const DEMO_DEVICES = [
-  { id: '1', name: 'SmartHeal Pro', serial_number: 'ITT-01', status: 'active', battery_level: 87, assigned_to: 'Dr. Smith' },
-  { id: '2', name: 'SmartHeal Pro', serial_number: 'ITT-02', status: 'active', battery_level: 92, assigned_to: 'Dr. Johnson' },
-  { id: '3', name: 'SmartHeal Pro', serial_number: 'ITT-03', status: 'inactive', battery_level: 45, assigned_to: 'Dr. Williams' },
+  { id: '1', name: 'SmartHeal Pro', serial_number: 'ITT-01', status: 'active', battery_level: 87, assigned_to: 'Dr. Verma' },
+  { id: '2', name: 'SmartHeal Pro', serial_number: 'ITT-02', status: 'active', battery_level: 92, assigned_to: 'Dr. Kapoor' },
+  { id: '3', name: 'SmartHeal Pro', serial_number: 'ITT-03', status: 'inactive', battery_level: 45, assigned_to: 'Dr. Mehta' },
 ];
 
 const PROTOCOLS = [

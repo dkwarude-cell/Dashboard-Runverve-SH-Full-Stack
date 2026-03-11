@@ -15,6 +15,7 @@ import { BarChart } from '@/components/charts/BarChart';
 import { LineChart } from '@/components/charts/LineChart';
 import { PieChart } from '@/components/charts/PieChart';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { useDashboard } from '@/hooks/useDashboard';
 import { useResponsive } from '@/hooks/useResponsive';
 
 // Demo data for charts when real data isn't available
@@ -54,6 +55,7 @@ export default function AnalyticsScreen() {
     loading,
     refresh,
   } = useAnalytics();
+  const { stats } = useDashboard();
   const { isMobile } = useResponsive();
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -97,28 +99,28 @@ export default function AnalyticsScreen() {
       <View style={[styles.statsGrid, isMobile && { flexWrap: 'wrap' }]}>
         <StatCard
           title="Total Clients"
-          value={127}
+          value={stats.total_clients || 127}
           trend="+12% vs last month"
           icon={<Users size={20} color="#d4183d" />}
           iconBgColor="#fef2f3"
         />
         <StatCard
           title="Sessions/Month"
-          value={523}
+          value={stats.active_sessions || 523}
           trend="+8% vs last month"
           icon={<Activity size={20} color="#3b82f6" />}
           iconBgColor="#dbeafe"
         />
         <StatCard
           title="Completion Rate"
-          value="93%"
+          value={`${stats.completion_rate || 93}%`}
           trend="+2% vs last month"
           icon={<CheckCircle size={20} color="#10b981" />}
           iconBgColor="#dcfce7"
         />
         <StatCard
           title="Avg Pain Reduction"
-          value="78%"
+          value={`${stats.total_devices || 78}%`}
           trend="+5% vs last month"
           icon={<Heart size={20} color="#f59e0b" />}
           iconBgColor="#fef3c7"

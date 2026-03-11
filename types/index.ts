@@ -54,7 +54,9 @@ export type AppSection =
   | 'device'
   | 'communications'
   | 'queries'
-  | 'company';
+  | 'company'
+  | 'ai-assistant'
+  | 'settings';
 
 export interface NavItem {
   key: AppSection;

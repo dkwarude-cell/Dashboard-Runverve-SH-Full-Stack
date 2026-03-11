@@ -57,19 +57,19 @@ const DEMO_QUERY_CATS = [
 ];
 
 const DEMO_ACTIVITY = [
-  { name: 'Dr. Sarah Johnson', action: 'Completed session with client Mike Chen', time: '2 min ago', type: 'session' },
-  { name: 'Dr. James Wilson', action: 'Started video call with Emma Davis', time: '5 min ago', type: 'video' },
-  { name: 'Dr. Lisa Anderson', action: 'Resolved query #Q004', time: '12 min ago', type: 'query' },
-  { name: 'Dr. Robert Taylor', action: 'Updated treatment protocol for Mark Lee', time: '18 min ago', type: 'session' },
-  { name: 'Dr. Emily Brown', action: 'Sent message to Sarah Williams', time: '25 min ago', type: 'message' },
+  { name: 'Dr. Priya Sharma', action: 'Completed session with client Arjun Patel', time: '2 min ago', type: 'session' },
+  { name: 'Dr. Vikram Reddy', action: 'Started video call with Ananya Iyer', time: '5 min ago', type: 'video' },
+  { name: 'Dr. Meera Nair', action: 'Resolved query #Q004', time: '12 min ago', type: 'query' },
+  { name: 'Dr. Rohan Gupta', action: 'Updated treatment protocol for Rajesh Kumar', time: '18 min ago', type: 'session' },
+  { name: 'Dr. Kavya Menon', action: 'Sent message to Deepika Singh', time: '25 min ago', type: 'message' },
 ];
 
 const DEMO_DOCTORS = [
-  { name: 'Dr. Sarah Johnson', clients: 28, sessions: 142, queries: 15, calls: 32, response: '2.3h', satisfaction: 4.9 },
-  { name: 'Dr. James Wilson', clients: 24, sessions: 118, queries: 12, calls: 28, response: '2.8h', satisfaction: 4.7 },
-  { name: 'Dr. Lisa Anderson', clients: 22, sessions: 105, queries: 18, calls: 25, response: '1.9h', satisfaction: 4.8 },
-  { name: 'Dr. Robert Taylor', clients: 19, sessions: 98, queries: 10, calls: 20, response: '3.1h', satisfaction: 4.6 },
-  { name: 'Dr. Emily Brown', clients: 17, sessions: 89, queries: 8, calls: 18, response: '2.5h', satisfaction: 4.8 },
+  { name: 'Dr. Priya Sharma', clients: 28, sessions: 142, queries: 15, calls: 32, response: '2.3h', satisfaction: 4.9 },
+  { name: 'Dr. Vikram Reddy', clients: 24, sessions: 118, queries: 12, calls: 28, response: '2.8h', satisfaction: 4.7 },
+  { name: 'Dr. Meera Nair', clients: 22, sessions: 105, queries: 18, calls: 25, response: '1.9h', satisfaction: 4.8 },
+  { name: 'Dr. Rohan Gupta', clients: 19, sessions: 98, queries: 10, calls: 20, response: '3.1h', satisfaction: 4.6 },
+  { name: 'Dr. Kavya Menon', clients: 17, sessions: 89, queries: 8, calls: 18, response: '2.5h', satisfaction: 4.8 },
 ];
 
 function getActivityIcon(type: string) {
