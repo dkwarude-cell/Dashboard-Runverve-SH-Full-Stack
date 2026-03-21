@@ -1,14 +1,11 @@
 -- SmartHeal Dashboard - Supabase Database Schema
 -- Run this in your Supabase SQL Editor to set up the database
 
--- Enable RLS
-ALTER DATABASE postgres SET "app.jwt_secret" TO '';
-
 -- ============================================
 -- PROFILES TABLE (extends auth.users)
 -- ============================================
 CREATE TABLE IF NOT EXISTS public.profiles (
-  id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+  id UUID PRIMARY KEY,
   email TEXT NOT NULL,
   full_name TEXT,
   avatar_url TEXT,
