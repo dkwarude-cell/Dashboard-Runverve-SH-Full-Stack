@@ -10,7 +10,7 @@ interface AvatarProps {
 }
 
 export function Avatar({ name, size = 40, color = '#3b82f6', style }: AvatarProps) {
-  const initials = name
+  const initials = (name || 'U')
     .split(' ')
     .map((n) => n[0])
     .join('')

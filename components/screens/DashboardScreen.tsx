@@ -38,7 +38,7 @@ const DEMO_CHART_DATA = [
 ];
 
 export default function DashboardScreen() {
-  const { stats, monthlyData, recentClients, todaysSchedule, loading, refresh } =
+  const { stats, monthlyData, recentClients = [], todaysSchedule = [], loading, refresh } =
     useDashboard();
   const { profile, user } = useAuth();
   const { isMobile, isDesktop } = useResponsive();
@@ -71,12 +71,13 @@ export default function DashboardScreen() {
         }))
       : DEMO_CHART_DATA;
 
-  const schedule = todaysSchedule.length > 0 ? todaysSchedule : DEMO_SCHEDULE;
+  const todaysScheduleArray = Array.isArray(todaysSchedule) ? todaysSchedule : [];
+  const schedule = todaysScheduleArray.length > 0 ? todaysScheduleArray : DEMO_SCHEDULE;
   const displayStats = {
-    total_clients: stats.total_clients || 127,
-    active_sessions: stats.active_sessions || 43,
-    completion_rate: stats.completion_rate || 78,
-    total_devices: stats.total_devices || 89,
+    total_clients: stats?.total_clients || 127,
+    active_sessions: stats?.active_sessions || 43,
+    completion_rate: stats?.completion_rate || 78,
+    total_devices: stats?.total_devices || 89,
   };
 
   return (
@@ -192,7 +193,7 @@ export default function DashboardScreen() {
       {/* Recent Clients Table */}
       <Card style={styles.tableCard}>
         <CardHeader title="Recent Clients" subtitle="Latest client activity" />
-        {recentClients.length === 0 ? (
+        {!recentClients || recentClients.length === 0 ? (
           <Text style={styles.emptyText}>No clients yet</Text>
         ) : (
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>

@@ -82,8 +82,9 @@ function SidebarItem({
 
 export function Sidebar({ activeSection, onSectionChange, onClose }: SidebarProps) {
   const { signOut } = useAuth();
-  const { clients } = useClients();
-  const activeClientCount = clients.filter(c => c.status === 'Active').length;
+  const { clients = [] } = useClients();
+  const clientsArray = Array.isArray(clients) ? clients : [];
+  const activeClientCount = clientsArray.filter((c) => c?.status === 'Active').length;
 
   const handleNavPress = (section: AppSection) => {
     onSectionChange(section);
@@ -150,8 +151,8 @@ export function Sidebar({ activeSection, onSectionChange, onClose }: SidebarProp
       <View style={styles.footer}>
         <View style={styles.activeClients}>
           <Text style={styles.activeClientsLabel}>Active Clients</Text>
-          <Text style={styles.activeClientsValue}>{activeClientCount || clients.length || '—'}</Text>
-          <Text style={styles.activeClientsChange}>{clients.length > 0 ? `${clients.length} total registered` : 'Loading...'}</Text>
+          <Text style={styles.activeClientsValue}>{activeClientCount > 0 ? activeClientCount : clientsArray.length || '—'}</Text>
+          <Text style={styles.activeClientsChange}>{clientsArray.length > 0 ? `${clientsArray.length} total registered` : 'Loading...'}</Text>
         </View>
         <Button
           title="Sign Out"

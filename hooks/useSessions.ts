@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
 import type { Session, SessionInsert, SessionUpdate } from '@/types';
+
+const API_BASE_URL = 'http://localhost:3000/api/v1';
+const MOCK_TOKEN = 'Bearer mock-token-dev';
 
 export function useSessions() {
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -11,16 +13,22 @@ export function useSessions() {
     try {
       setLoading(true);
       setError(null);
-      const { data, error: fetchError } = await supabase
-        .from('sessions')
-        .select('*')
-        .order('date', { ascending: false });
+      const response = await fetch(`${API_BASE_URL}/sessions`, {
+        headers: {
+          'Authorization': MOCK_TOKEN,
+          'Content-Type': 'application/json',
+        },
+      });
 
-      if (fetchError) throw fetchError;
-      setSessions(data || []);
+      if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
+      const { data } = await response.json();
+      // Backend returns { data: sessions[], total, limit, offset }
+      const sessionsArray = Array.isArray(data) ? data : (data?.data || []);
+      setSessions(sessionsArray);
     } catch (err: any) {
       setError(err.message);
       console.error('Error fetching sessions:', err);
+      setSessions([]);
     } finally {
       setLoading(false);
     }
@@ -28,13 +36,17 @@ export function useSessions() {
 
   const createSession = useCallback(async (session: SessionInsert) => {
     try {
-      const { data, error } = await supabase
-        .from('sessions')
-        .insert(session)
-        .select()
-        .single();
+      const response = await fetch(`${API_BASE_URL}/sessions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': MOCK_TOKEN,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(session),
+      });
 
-      if (error) throw error;
+      if (!response.ok) throw new Error(`Failed to create: ${response.status}`);
+      const { data } = await response.json();
       setSessions((prev) => [data, ...prev]);
       return data;
     } catch (err: any) {
@@ -45,14 +57,17 @@ export function useSessions() {
 
   const updateSession = useCallback(async (id: string, updates: SessionUpdate) => {
     try {
-      const { data, error } = await supabase
-        .from('sessions')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
+      const response = await fetch(`${API_BASE_URL}/sessions/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': MOCK_TOKEN,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
 
-      if (error) throw error;
+      if (!response.ok) throw new Error(`Failed to update: ${response.status}`);
+      const { data } = await response.json();
       setSessions((prev) => prev.map((s) => (s.id === id ? data : s)));
       return data;
     } catch (err: any) {
@@ -64,17 +79,26 @@ export function useSessions() {
   const filterSessions = useCallback(async (status: string) => {
     try {
       setLoading(true);
-      let query = supabase.from('sessions').select('*').order('date', { ascending: false });
-
+      const params = new URLSearchParams();
       if (status !== 'All') {
-        query = query.eq('status', status as 'Completed' | 'Scheduled' | 'Cancelled' | 'In Progress');
+        params.append('status', status);
       }
 
-      const { data, error } = await query;
-      if (error) throw error;
-      setSessions(data || []);
+      const response = await fetch(`${API_BASE_URL}/sessions${params.toString() ? '?' + params : ''}`, {
+        headers: {
+          'Authorization': MOCK_TOKEN,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) throw new Error(`Failed to filter: ${response.status}`);
+      const { data } = await response.json();
+      // Backend returns { data: sessions[], total, limit, offset }
+      const sessionsArray = Array.isArray(data) ? data : (data?.data || []);
+      setSessions(sessionsArray);
     } catch (err: any) {
       console.error('Error filtering sessions:', err);
+      setSessions([]);
     } finally {
       setLoading(false);
     }
@@ -82,17 +106,6 @@ export function useSessions() {
 
   useEffect(() => {
     fetchSessions();
-
-    const subscription = supabase
-      .channel('sessions-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'sessions' }, () => {
-        fetchSessions();
-      })
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
   }, [fetchSessions]);
 
   const stats = {

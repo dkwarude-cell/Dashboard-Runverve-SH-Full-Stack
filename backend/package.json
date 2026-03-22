@@ -1,0 +1,45 @@
+{
+  "name": "smartheal-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Production-grade backend for SmartHeal Dashboard",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "migrate:latest": "knex migrate:latest --env development",
+    "migrate:rollback": "knex migrate:rollback --env development",
+    "migrate:make": "knex migrate:make",
+    "seed": "knex seed:run --env development",
+    "seed:data": "node scripts/seed.js",
+    "lint": "eslint src/",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f postgres"
+  },
+  "keywords": [
+    "backend",
+    "express",
+    "postgres",
+    "firebase"
+  ],
+  "author": "SmartHeal",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^12.8.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "firebase-admin": "^12.0.0",
+    "helmet": "^7.1.0",
+    "joi": "^17.11.0",
+    "knex": "^3.1.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.11.3",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.54.0",
+    "nodemon": "^3.0.2"
+  }
+}

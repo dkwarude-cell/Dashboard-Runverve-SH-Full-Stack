@@ -1,18 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
 import {
-  calculateClientStats,
-  calculateSessionStats,
-  calculateTherapyOutcomes,
-  calculateMonthlyGrowth,
-  calculateTherapistPerformance,
-  identifyRiskClients,
   type ClientStats,
   type SessionStats,
   type TherapyOutcomeStats,
   type TherapistPerformance,
   type ClientRisk,
 } from '@/lib/analytics';
+
+const API_BASE_URL = 'http://localhost:3000/api/v1';
+const MOCK_TOKEN = 'Bearer mock-token-dev';
 
 export function useAnalytics() {
   const [clientDistribution, setClientDistribution] = useState<
@@ -31,102 +27,114 @@ export function useAnalytics() {
     try {
       setLoading(true);
 
-      // Fetch all required data
-      const [
-        { data: clientsData },
-        { data: sessionsData },
-        { data: therapistsData },
-        { data: eventsData },
-      ] = await Promise.all([
-        supabase.from('clients').select('*'),
-        supabase.from('sessions').select('*').order('created_at', { ascending: true }),
-        supabase.from('profiles').select('*').eq('role', 'therapist'),
-        supabase
-          .from('analytics_events')
-          .select('event_type, created_at')
-          .in('event_type', ['login', 'signup'])
-          .order('created_at', { ascending: true }),
-      ]);
-
-      const clients = clientsData || [];
-      const sessions = sessionsData || [];
-      const therapists = therapistsData || [];
-      const events = eventsData || [];
-
-      // Calculate all statistics using analytics library
-      const stats = calculateClientStats(clients);
-      const sessionStat = calculateSessionStats(sessions);
-      const outcomes = calculateTherapyOutcomes(sessions);
-      const monthlyGrowth = calculateMonthlyGrowth(clients, sessions);
-      const therapistPerf = calculateTherapistPerformance(therapists, clients, sessions);
-      const riskClientsList = identifyRiskClients(clients);
-
-      // Set client distribution
-      const colors = ['#e84d6a', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
-      setClientDistribution(
-        Object.entries(stats.byProfileType).map(([label, value], i) => ({
-          label,
-          value,
-          color: colors[i % colors.length],
-        }))
-      );
-
-      // Set session trends
-      const monthlyMap: Record<string, { scheduled: number; completed: number }> = {};
-      sessions.forEach((s) => {
-        const month = new Date(s.created_at).toLocaleDateString('en', { month: 'short' });
-        if (!monthlyMap[month]) monthlyMap[month] = { scheduled: 0, completed: 0 };
-        if (s.status === 'Completed') monthlyMap[month].completed++;
-        else monthlyMap[month].scheduled++;
+      // Fetch analytics from backend
+      const response = await fetch(`${API_BASE_URL}/analytics/dashboard`, {
+        headers: {
+          'Authorization': MOCK_TOKEN,
+          'Content-Type': 'application/json',
+        },
       });
-      setSessionTrends(
-        Object.entries(monthlyMap).map(([month, data]) => ({
-          label: month,
-          values: [
-            { value: data.scheduled, color: '#3b82f6', label: 'Scheduled' },
-            { value: data.completed, color: '#10b981', label: 'Completed' },
-          ],
-        }))
-      );
+
+      if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
+      const { data } = await response.json();
+
+      // Backend returns processed analytics data
+      // Format for UI consumption
+      
+      // Set client stats from backend data
+      if (data.clientStats) {
+        setClientStats({
+          totalClients: data.clientStats.total,
+          activeClients: data.clientStats.activeThisMonth,
+          byProfileType: data.clientStats.byDiagnosis || {},
+          atRiskPercentage: data.clientStats.atRiskPercentage || 0,
+        });
+      }
+
+      // Set session stats
+      if (data.sessionStats) {
+        setSessionStats({
+          totalSessions: data.sessionStats.total,
+          completedSessions: data.sessionStats.completionRate,
+          avgDuration: data.sessionStats.avgDuration,
+          completionRate: data.sessionStats.completionRate,
+        });
+      }
 
       // Set therapy outcomes
-      setTherapyOutcomes(
-        outcomes.map((outcome: TherapyOutcomeStats) => ({
-          label: outcome.therapyType,
-          values: [
-            {
-              value: outcome.avgProgress,
-              color: '#10b981',
-            },
-          ],
-        }))
-      );
+      if (data.therapyOutcomes) {
+        setTherapyOutcomes(
+          Object.entries(data.therapyOutcomes.progressTrends || {}).map(([label, value]: any) => ({
+            label,
+            values: [{ value, color: '#10b981' }],
+          }))
+        );
+      }
 
-      // Set growth data
-      const growthMap: Record<string, { logins: number; signups: number }> = {};
-      events.forEach((e) => {
-        const month = new Date(e.created_at).toLocaleDateString('en', { month: 'short' });
-        if (!growthMap[month]) growthMap[month] = { logins: 0, signups: 0 };
-        if (e.event_type === 'login') growthMap[month].logins++;
-        else growthMap[month].signups++;
-      });
-      setGrowthData(
-        Object.entries(growthMap).map(([month, data]) => ({
-          label: month,
-          values: [
-            { value: data.logins, color: '#3b82f6', label: 'Logins' },
-            { value: data.signups, color: '#10b981', label: 'Signups' },
-          ],
-        }))
-      );
+      // Set growth data (6-month trends)
+      if (data.monthlyGrowth && Array.isArray(data.monthlyGrowth)) {
+        setGrowthData(
+          data.monthlyGrowth.map((month: any) => ({
+            label: month.month,
+            values: [
+              { value: month.newClientsAdded, color: '#10b981', label: 'New Clients' },
+              { value: month.totalSessions, color: '#3b82f6', label: 'Sessions' },
+            ],
+          }))
+        );
+      }
 
-      // Set computed statistics
-      setClientStats(stats);
-      setSessionStats(sessionStat);
-      setTherapistPerformance(therapistPerf);
-      setRiskClients(riskClientsList);
+      // Set therapist performance
+      if (data.therapistPerformance && data.therapistPerformance.topTherapists) {
+        setTherapistPerformance(
+          data.therapistPerformance.topTherapists.map((therapist: any) => ({
+            name: therapist.name,
+            rating: therapist.rating,
+            sessions: therapist.sessionsCompleted,
+            capacityUsage: therapist.capacityUtilization,
+          }))
+        );
+      }
+
+      // Set at-risk clients
+      if (data.riskAssessment && data.riskAssessment.atRiskClients) {
+        setRiskClients(
+          data.riskAssessment.atRiskClients.map((client: any) => ({
+            id: client.id,
+            name: client.name,
+            riskLevel: client.riskScore,
+            riskFactors: client.riskFactors,
+          }))
+        );
+      }
+
+      // Set client distribution (by diagnosis)
+      if (data.clientStats && data.clientStats.byDiagnosis) {
+        const colors = ['#e84d6a', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
+        setClientDistribution(
+          Object.entries(data.clientStats.byDiagnosis).map(([label, value]: any, i) => ({
+            label,
+            value,
+            color: colors[i % colors.length],
+          }))
+        );
+      }
+
+      // Set session trends
+      if (data.sessionStats && data.sessionStats.byStatus) {
+        const colors = ['#e84d6a', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
+        setSessionTrends(
+          Object.entries(data.sessionStats.byStatus).map(([label, value]: any, i) => ({
+            label,
+            values: [{ value, color: colors[i % colors.length], label }],
+          }))
+        );
+      }
     } catch (err: any) {
       console.error('Error fetching analytics:', err);
+      // Set default empty values on error
+      setClientStats(null);
+      setSessionStats(null);
     } finally {
       setLoading(false);
     }

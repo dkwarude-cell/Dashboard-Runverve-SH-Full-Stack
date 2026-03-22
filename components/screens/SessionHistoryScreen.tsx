@@ -47,9 +47,10 @@ const CLIENT_NAMES: Record<string, { name: string; type: string }> = {
 };
 
 export default function SessionHistoryScreen() {
-  const { sessions, loading, stats, filterSessions, createSession, fetchSessions } =
+  const { sessions = [], loading, stats, filterSessions, createSession, fetchSessions } =
     useSessions();
   const { isMobile } = useResponsive();
+  const sessionsArray = Array.isArray(sessions) ? sessions : [];
 
   const [activeFilter, setActiveFilter] = useState('All');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -163,7 +164,7 @@ export default function SessionHistoryScreen() {
         />
 
         {/* Session List */}
-        {sessions.length === 0 ? (
+        {sessionsArray.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Calendar size={48} color="#94a3b8" />
             <Text style={styles.emptyTitle}>No sessions found</Text>
@@ -172,7 +173,7 @@ export default function SessionHistoryScreen() {
             </Text>
           </View>
         ) : (
-          sessions.map((session, index) => {
+          sessionsArray.map((session, index) => {
             const clientInfo = CLIENT_NAMES[session.therapy_type] || {
               name: `Client ${index + 1}`,
               type: session.therapy_type,

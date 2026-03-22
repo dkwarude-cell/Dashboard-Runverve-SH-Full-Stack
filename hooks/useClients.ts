@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
 import type { Client, ClientInsert, ClientUpdate } from '@/types';
+
+const API_BASE_URL = 'http://localhost:3000/api/v1';
+const MOCK_TOKEN = 'Bearer mock-token-dev';
 
 export function useClients() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -11,16 +13,23 @@ export function useClients() {
     try {
       setLoading(true);
       setError(null);
-      const { data, error: fetchError } = await supabase
-        .from('clients')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const response = await fetch(`${API_BASE_URL}/clients`, {
+        headers: {
+          'Authorization': MOCK_TOKEN,
+          'Content-Type': 'application/json',
+        },
+      });
 
-      if (fetchError) throw fetchError;
-      setClients(data || []);
+      if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
+      const { data } = await response.json();
+      // Backend returns { data: clients[], total, limit, offset }
+      const clientsArray = Array.isArray(data) ? data : (data?.data || []);
+      setClients(clientsArray);
     } catch (err: any) {
       setError(err.message);
       console.error('Error fetching clients:', err);
+      // Fallback to empty array to prevent UI crash
+      setClients([]);
     } finally {
       setLoading(false);
     }
@@ -28,13 +37,17 @@ export function useClients() {
 
   const createClient = useCallback(async (client: ClientInsert) => {
     try {
-      const { data, error } = await supabase
-        .from('clients')
-        .insert(client)
-        .select()
-        .single();
+      const response = await fetch(`${API_BASE_URL}/clients`, {
+        method: 'POST',
+        headers: {
+          'Authorization': MOCK_TOKEN,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(client),
+      });
 
-      if (error) throw error;
+      if (!response.ok) throw new Error(`Failed to create: ${response.status}`);
+      const { data } = await response.json();
       setClients((prev) => [data, ...prev]);
       return data;
     } catch (err: any) {
@@ -45,14 +58,17 @@ export function useClients() {
 
   const updateClient = useCallback(async (id: string, updates: ClientUpdate) => {
     try {
-      const { data, error } = await supabase
-        .from('clients')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
+      const response = await fetch(`${API_BASE_URL}/clients/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': MOCK_TOKEN,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
 
-      if (error) throw error;
+      if (!response.ok) throw new Error(`Failed to update: ${response.status}`);
+      const { data } = await response.json();
       setClients((prev) => prev.map((c) => (c.id === id ? data : c)));
       return data;
     } catch (err: any) {
@@ -63,8 +79,14 @@ export function useClients() {
 
   const deleteClient = useCallback(async (id: string) => {
     try {
-      const { error } = await supabase.from('clients').delete().eq('id', id);
-      if (error) throw error;
+      const response = await fetch(`${API_BASE_URL}/clients/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': MOCK_TOKEN,
+        },
+      });
+
+      if (!response.ok) throw new Error(`Failed to delete: ${response.status}`);
       setClients((prev) => prev.filter((c) => c.id !== id));
     } catch (err: any) {
       console.error('Error deleting client:', err);
@@ -79,16 +101,21 @@ export function useClients() {
     }
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('clients')
-        .select('*')
-        .or(`name.ilike.%${query}%,email.ilike.%${query}%,phone.ilike.%${query}%`)
-        .order('created_at', { ascending: false });
+      const response = await fetch(`${API_BASE_URL}/clients?search=${encodeURIComponent(query)}`, {
+        headers: {
+          'Authorization': MOCK_TOKEN,
+          'Content-Type': 'application/json',
+        },
+      });
 
-      if (error) throw error;
-      setClients(data || []);
+      if (!response.ok) throw new Error(`Failed to search: ${response.status}`);
+      const { data } = await response.json();
+      // Backend returns { data: clients[], total, limit, offset }
+      const clientsArray = Array.isArray(data) ? data : (data?.data || []);
+      setClients(clientsArray);
     } catch (err: any) {
       console.error('Error searching clients:', err);
+      setClients([]);
     } finally {
       setLoading(false);
     }
@@ -96,18 +123,6 @@ export function useClients() {
 
   useEffect(() => {
     fetchClients();
-
-    // Real-time subscription
-    const subscription = supabase
-      .channel('clients-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'clients' }, () => {
-        fetchClients();
-      })
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
   }, [fetchClients]);
 
   const stats = {
