@@ -1,10 +1,67 @@
 # Architecture & Data Flow Diagrams
 
+## Current Architecture (Node.js + Docker + React Native)
+
+The stack has transitioned from API to a custom Node.js API with a containerized PostgreSQL database.
+
+```mermaid
+graph TD
+    subgraph Client ["Frontend: React Native (Expo) - Port 8081"]
+        UI["React Native Components\n(Screens, Charts, Modals)"]
+        Hooks["Custom Hooks\n(useAnalytics, useSessions, etc.)"]
+        Fetch["Fetch API"]
+        UI -->|Consumes Data| Hooks
+        Hooks -->|HTTP Requests| Fetch
+    end
+
+    subgraph Backend ["Backend: Node.js (Express) - Port 3000"]
+        Router["API Router\n(/api/v1/...)"]
+        AuthMiddleware["Auth Middleware\n(JWT/Firebase)"]
+        Controllers["Controllers\n(Handle Req/Res)"]
+        Services["Services\n(Business Logic, Knex Build)"]
+        Knex["Knex.js ORM"]
+
+        Fetch <-->|REST API\nJSON| Router
+        Router --> AuthMiddleware
+        AuthMiddleware --> Controllers
+        Controllers --> Services
+        Services --> Knex
+    end
+
+    subgraph ContainerSpace ["Docker Environment"]
+        Postgres[(PostgreSQL 16\nPort 5433\n'smartheal_db')]
+    end
+
+    Knex <-->|TCP / PostgreSQL Protocol| Postgres
+
+    %% Styling
+    classDef client fill:#eef2ff,stroke:#3b82f6,stroke-width:2px,color:black
+    classDef backend fill:#f0fdf4,stroke:#10b981,stroke-width:2px,color:black
+    classDef db fill:#fff7ed,stroke:#f59e0b,stroke-width:2px,color:black
+    
+    class Client,UI,Hooks,Fetch client
+    class Backend,Router,AuthMiddleware,Controllers,Services,Knex backend
+    class ContainerSpace,Postgres db
+```
+
+## Data Flow Pipeline
+
+1. **User Request**: The user opens the Analytics or Session view in the Expo App.
+2. **Hook Trigger**: `useAnalytics.ts` or `useSessions.ts` fires a `fetch()` request containing a Bearer token (`mock-token-dev` in development).
+3. **API Routing**: The Express Router (`backend/src/routes/`) catches the request on `http://localhost:3000/api/v1/*`.
+4. **Middleware**: `auth.js` middleware validates the token.
+5. **Controller & Service**: The route controller delegates to a Service file (like `analyticsService.js`).
+6. **Query Construction**: The service utilizes `Knex.js` with PostgreSQL-compatible syntax (e.g., `NOW() - INTERVAL '30 days'`) to formulate the SQL query.
+7. **Database Execution**: Knex sends the query to the **Dockerized PostgreSQL** container on `127.0.0.1:5433`.
+8. **Response Return**: The DB returns rows, Knex formats them into a JS object, the Service returns it to the Controller, the Controller replies via JSON, and the React frontend updates its state (`useState`), re-rendering the UI.
+
+---
+
 ## Data Structure Hierarchy
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│           SUPABASE BACKEND TABLES                     │
+│           POSTGRESQL BACKEND TABLES                   │
 ├──────────────────────────────────────────────────────┤
 │                                                       │
 │  ┌─────────────────────────────────────────────┐    │
@@ -87,13 +144,13 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    SUPABASE                                  │
+│                    NODE.JS API + POSTGRES                    │
 │  Tables: profiles, clients, sessions, queries, devices...   │
 └─────────────────────────────────────────────────────────────┘
                            ↓
         ┌─────────────────────────────────────┐
-        │    Real-time Subscriptions          │
-        │   (Postgres Changes, Broadcast)     │
+        │             Express/Knex.js         │
+        │    (REST API & Backend Services)    │
         └─────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -288,7 +345,7 @@ USER ACTION
   ↓
   │ (e.g., update client status)
   ↓
-PUT request to Supabase
+PUT request to Node API
   ↓
 Database UPDATE
   ↓
@@ -399,7 +456,7 @@ QUERY MANAGEMENT
                       ▲
                       │ calls
                       │
-                   SUPABASE
+                   POSTGRESQL API
     ┌─────────────────────────────────────┐
     │  Database Tables                     │
     │  Real-time Subscriptions             │
@@ -422,7 +479,7 @@ START
 │       AuthProvider (lib/auth.tsx)        │
 ├─────────────────────────────────────────┤
 │ • Wraps entire app                       │
-│ • Manages Supabase session               │
+│ • Manages JWT session               │
 │ • On auth state change → fetch profile  │
 └─────────────────────────────────────────┘
   ↓
@@ -447,7 +504,7 @@ useAuth() hook available to all screens
 ## State Management Pattern
 
 ```
-Hook receives data from Supabase
+Hook receives data from API
   ↓
 useState() manages local state
   ↓

@@ -716,7 +716,11 @@ docker run -e NODE_ENV=production smartheal-backend
 
 Backend code: `src/services/analyticsService.js`
 Frontend integration: `hooks/useAnalytics.ts` (update to call backend)
-Database: `smartheal.db` (SQLite)
+Database: `smartheal_db` (Docker PostgreSQL Container)
+
+### Why Docker wasn't being used previously:
+
+Previously, the backend was defaulting to a local SQLite database or falling back out of Docker because the `POSTGRES_PASSWORD` configured in `docker-compose.yml` (`postgres123`) did not match the actual secure password you had set for your local PostgreSQL instance or the expected Docker environment (`Deepak@123`). This mismatch caused the backend to crash or fall back when trying to authenticate as the `postgres` user. We have now correctly updated the environment variables and the `docker-compose.yml` file to synchronize the passwords and successfully wired the backend directly to the Dockerized PostgreSQL instance!
 
 ---
 

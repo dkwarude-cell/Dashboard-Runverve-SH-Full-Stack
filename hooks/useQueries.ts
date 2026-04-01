@@ -1,6 +1,39 @@
-import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
+import { useState, useCallback, useEffect } from 'react';
 import type { Query, QueryResponse, QueryInsert, QueryResponseInsert, QueryUpdate } from '@/types';
+
+// Dummy queries initially injected into the state
+const DEMO_QUERIES: Query[] = [
+  {
+    id: '1', title: 'Device connectivity issue', description: 'SmartHeal Pro is not connecting to the mobile app via Bluetooth',
+    client_id: 'c1', assigned_to: null, priority: 'High', status: 'In Progress',
+    support_id: 'Q001', device_info: null, created_at: new Date(Date.now() - 3600000).toISOString(), updated_at: new Date().toISOString(),
+  },
+  {
+    id: '2', title: 'Treatment plan adjustment request', description: 'Client requesting modification to current therapy protocol',
+    client_id: 'c2', assigned_to: null, priority: 'Medium', status: 'Open',
+    support_id: 'Q002', device_info: null, created_at: new Date(Date.now() - 7200000).toISOString(), updated_at: new Date().toISOString(),
+  },
+  {
+    id: '3', title: 'Billing discrepancy', description: 'Client reports incorrect charge on latest invoice',
+    client_id: 'c3', assigned_to: null, priority: 'Low', status: 'New',
+    support_id: 'Q003', device_info: null, created_at: new Date(Date.now() - 10800000).toISOString(), updated_at: new Date().toISOString(),
+  },
+  {
+    id: '4', title: 'Device firmware update issue', description: 'Unable to update firmware on SmartHeal device ITT-03',
+    client_id: 'c4', assigned_to: null, priority: 'Critical', status: 'Open',
+    support_id: 'Q004', device_info: null, created_at: new Date(Date.now() - 14400000).toISOString(), updated_at: new Date().toISOString(),
+  },
+  {
+    id: '5', title: 'Session data not syncing', description: 'Therapy session data not appearing in dashboard after completion',
+    client_id: 'c5', assigned_to: null, priority: 'High', status: 'In Progress',
+    support_id: 'Q005', device_info: null, created_at: new Date(Date.now() - 18000000).toISOString(), updated_at: new Date().toISOString(),
+  },
+  {
+    id: '6', title: 'Pain reduction protocol inquiry', description: 'Requesting information about advanced pain management protocols',
+    client_id: 'c6', assigned_to: null, priority: 'Medium', status: 'Closed',
+    support_id: 'Q006', device_info: null, created_at: new Date(Date.now() - 86400000).toISOString(), updated_at: new Date().toISOString(),
+  },
+];
 
 export function useQueries() {
   const [queries, setQueries] = useState<Query[]>([]);
@@ -12,111 +45,70 @@ export function useQueries() {
     try {
       setLoading(true);
       setError(null);
-      const { data, error: fetchError } = await supabase
-        .from('queries')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (fetchError) throw fetchError;
-      setQueries(data || []);
+      // Simulate network request
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Only set queries if empty (so we don't wipe out local changes on refresh)
+      setQueries((prev) => prev.length ? prev : [...DEMO_QUERIES]);
     } catch (err: any) {
       setError(err.message);
-      console.error('Error fetching queries:', err);
     } finally {
       setLoading(false);
     }
   }, []);
 
   const fetchResponses = useCallback(async (queryId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('query_responses')
-        .select('*')
-        .eq('query_id', queryId)
-        .order('created_at', { ascending: true });
-
-      if (error) throw error;
-      setResponses((prev) => ({ ...prev, [queryId]: data || [] }));
-    } catch (err: any) {
-      console.error('Error fetching responses:', err);
-    }
+    // Return empty for dummy
+    setResponses((prev) => ({ ...prev, [queryId]: prev[queryId] || [] }));
   }, []);
 
   const createQuery = useCallback(async (query: QueryInsert) => {
-    try {
-      const { data, error } = await supabase
-        .from('queries')
-        .insert(query)
-        .select()
-        .single();
+    const newQuery: Query = {
+      ...query,
+      id: Math.random().toString(36).substr(2, 9),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      priority: query.priority || 'Medium',
+      status: query.status || 'New',
+    } as Query;
 
-      if (error) throw error;
-      setQueries((prev) => [data, ...prev]);
-      return data;
-    } catch (err: any) {
-      console.error('Error creating query:', err);
-      throw err;
-    }
+    setQueries((prev) => [newQuery, ...prev]);
+    return newQuery;
   }, []);
 
   const updateQuery = useCallback(async (id: string, updates: QueryUpdate) => {
-    try {
-      const { data, error } = await supabase
-        .from('queries')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      setQueries((prev) => prev.map((q) => (q.id === id ? data : q)));
-      return data;
-    } catch (err: any) {
-      console.error('Error updating query:', err);
-      throw err;
-    }
+    setQueries((prev) =>
+      prev.map((q) => {
+        if (q.id === id) {
+          return { ...q, ...updates, updated_at: new Date().toISOString() } as Query;
+        }
+        return q;
+      })
+    );
   }, []);
 
   const addResponse = useCallback(async (response: QueryResponseInsert) => {
-    try {
-      const { data, error } = await supabase
-        .from('query_responses')
-        .insert(response)
-        .select()
-        .single();
+    const newResponse: QueryResponse = {
+      ...response,
+      id: Math.random().toString(36).substr(2, 9),
+      created_at: new Date().toISOString(),
+    } as QueryResponse;
 
-      if (error) throw error;
-      setResponses((prev) => ({
-        ...prev,
-        [response.query_id]: [...(prev[response.query_id] || []), data],
-      }));
-      return data;
-    } catch (err: any) {
-      console.error('Error adding response:', err);
-      throw err;
-    }
+    setResponses((prev) => ({
+      ...prev,
+      [response.query_id]: [...(prev[response.query_id] || []), newResponse],
+    }));
+    return newResponse;
   }, []);
 
   useEffect(() => {
     fetchQueries();
-
-    const subscription = supabase
-      .channel('queries-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'queries' }, () => {
-        fetchQueries();
-      })
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
   }, [fetchQueries]);
 
   const stats = {
     total: queries.length,
     open: queries.filter((q) => q.status === 'Open' || q.status === 'New').length,
     inProgress: queries.filter((q) => q.status === 'In Progress').length,
-    closed: queries.filter((q) => q.status === 'Closed').length,
+    closed: queries.filter((q) => q.status === 'Closed' || q.status === 'Solved').length,
   };
 
   return {

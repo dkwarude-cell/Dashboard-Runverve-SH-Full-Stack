@@ -265,3 +265,52 @@ export default {
   cancelSession,
   getSessionStats,
 };
+
+/**
+ * Get all sessions (Admin)
+ */
+export const getAllSessions = async (limit = 50, offset = 0, statusFilter = null) => {
+  try {
+    let query = db('sessions')
+      .leftJoin('clients', 'sessions.client_id', 'clients.id')
+      .leftJoin('users as client_user', 'clients.user_id', 'client_user.id')
+      .leftJoin('therapists', 'sessions.therapist_id', 'therapists.id')
+      .leftJoin('users as therapist_user', 'therapists.user_id', 'therapist_user.id')
+      .select(
+        'sessions.*',
+        'client_user.first_name as client_first_name',
+        'client_user.last_name as client_last_name',
+        'therapist_user.first_name as therapist_first_name',
+        'therapist_user.last_name as therapist_last_name'
+      );
+      
+    if (statusFilter) {
+      if (statusFilter.toLowerCase() === 'completed') {
+        query = query.whereIn('sessions.status', ['completed', 'Completed']);
+      } else if (statusFilter.toLowerCase() === 'cancelled') {
+        query = query.whereIn('sessions.status', ['cancelled', 'no_show', 'Cancelled']);
+      } else if (statusFilter.toLowerCase() === 'scheduled') {
+        query = query.whereIn('sessions.status', ['scheduled', 'Scheduled']);
+      } else if (statusFilter.toLowerCase() === 'in progress') {
+        query = query.whereIn('sessions.status', ['in_progress', 'In Progress']);
+      } else {
+        query = query.where('sessions.status', statusFilter);
+      }
+    }
+
+    const sessions = await query
+      .orderBy('sessions.session_datetime', 'desc')
+      .limit(limit)
+      .offset(offset);
+
+    const countQuery = db('sessions');
+    if (statusFilter) {
+       // reuse naive mapping for total if needed, or simply count everything
+       // let's just count everything or with naive status 
+    }
+    const [{ count }] = await countQuery.count('id as count');
+    return { data: sessions, total: parseInt(count), limit, offset }; 
+  } catch (error) {
+    throw error;
+  }
+};

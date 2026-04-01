@@ -104,20 +104,17 @@ function timeAgo(dateStr: string) {
 }
 
 export default function QueryManagementScreen() {
-  const { queries: realQueries, stats, loading, fetchQueries } = useQueries();
+  const { queries: realQueries, stats, loading, fetchQueries, updateQuery } = useQueries();
   const { isMobile } = useResponsive();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedQuery, setSelectedQuery] = useState<Query | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const queries = realQueries.length > 0 ? realQueries : DEMO_QUERIES;
+  // Filter out 'Solved' or 'Closed' queries unless the user wants to see them
+  // For now, removing them entirely from the main view as requested
+  const queries = realQueries.filter(q => q.status !== 'Solved' && q.status !== 'Closed');
 
-  const computedStats = realQueries.length > 0 ? stats : {
-    total: DEMO_QUERIES.length,
-    open: DEMO_QUERIES.filter(q => q.status === 'Open' || q.status === 'New').length,
-    inProgress: DEMO_QUERIES.filter(q => q.status === 'In Progress').length,
-    closed: DEMO_QUERIES.filter(q => q.status === 'Closed').length,
-  };
+  const computedStats = stats;
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -274,8 +271,27 @@ export default function QueryManagementScreen() {
                   <Text style={styles.detailMetaValue}>
                     {new Date(selectedQuery.created_at).toLocaleDateString()}
                   </Text>
-                </View>
-              </>
+                </View>                
+                <View style={{ marginTop: 24, paddingTop: 20, borderTopWidth: 1, borderTopColor: '#f1f5f9' }}>
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 8,
+                      backgroundColor: '#10b981',
+                      borderRadius: 8,
+                      paddingVertical: 12,
+                    }}
+                    onPress={() => {
+                      updateQuery(selectedQuery.id, { status: 'Solved' });
+                      setSelectedQuery(null);
+                    }}
+                  >
+                    <CheckCircle size={18} color="#fff" />
+                    <Text style={{ fontSize: 14, fontWeight: '600', color: '#fff' }}>Mark as Solved</Text>
+                  </TouchableOpacity>
+                </View>              </>
             ) : (
               <View style={styles.detailEmpty}>
                 <MessageCircle size={40} color="#e2e8f0" />

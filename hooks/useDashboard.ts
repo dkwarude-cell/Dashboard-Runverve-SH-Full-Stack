@@ -65,7 +65,24 @@ export function useDashboard() {
           // Backend returns { data: { data: clients[], total, limit, offset } }
           const result = json.data;
           const clientsArray = Array.isArray(result) ? result : (result?.data || []);
-          setRecentClients(clientsArray);
+          
+          const mappedRecent = clientsArray.map((c: any) => {
+            const total = c.total_sessions || 1;
+            const completed = c.completed_sessions || 0;
+            const progress = Math.round((completed / total) * 100) || 0;
+            
+            const colors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899'];
+            const nameCode = (c.name || 'A').charCodeAt(0);
+            const avatarColor = colors[nameCode % colors.length];
+            return {
+                ...c,
+                progress: progress,
+                sessions: completed,
+                status: c.status || 'Active',
+                avatar_color: avatarColor
+            };
+          });
+          setRecentClients(mappedRecent);
         }
       }
     } catch (err: any) {

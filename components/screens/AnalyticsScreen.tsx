@@ -133,7 +133,7 @@ export default function AnalyticsScreen() {
         <Card style={{...styles.chartCard, ...(isMobile ? styles.chartCardMobile : {})}}>
           <CardHeader title="Growth Trends" />
           <LineChart
-            data={growthData.length > 0 ? growthData : DEMO_GROWTH}
+            data={growthData}
             height={220}
             legend={[
               { label: 'Clients', color: '#3b82f6' },
@@ -146,11 +146,7 @@ export default function AnalyticsScreen() {
         <Card style={{...styles.chartCard, ...(isMobile ? styles.chartCardMobile : {})}}>
           <CardHeader title="Client Profile Distribution" />
           <PieChart
-            data={clientDistribution.length > 0 ? clientDistribution : [
-              { label: 'Runner/Athlete', value: 52, color: '#3b82f6' },
-              { label: 'Health & Wellness', value: 43, color: '#f59e0b' },
-              { label: 'Coach/Trainer', value: 32, color: '#10b981' },
-            ]}
+            data={clientDistribution.length > 0 ? clientDistribution : []}
             size={180}
             innerRadius={0.6}
           />
@@ -163,7 +159,7 @@ export default function AnalyticsScreen() {
         <Card style={{...styles.chartCard, ...(isMobile ? styles.chartCardMobile : {})}}>
           <CardHeader title="Average Therapy Outcomes" />
           <BarChart
-            data={therapyOutcomes.length > 0 ? therapyOutcomes : DEMO_OUTCOMES}
+            data={therapyOutcomes}
             height={220}
           />
         </Card>
@@ -172,7 +168,7 @@ export default function AnalyticsScreen() {
         <Card style={{...styles.chartCard, ...(isMobile ? styles.chartCardMobile : {})}}>
           <CardHeader title="Weekly Session Distribution" />
           <BarChart
-            data={sessionTrends.length > 0 ? sessionTrends : DEMO_WEEKLY}
+            data={sessionTrends}
             height={220}
           />
         </Card>

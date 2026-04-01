@@ -54,6 +54,7 @@ export default function SessionHistoryScreen() {
 
   const [activeFilter, setActiveFilter] = useState('All');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<any | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [formData, setFormData] = useState({
     therapy_type: '',
@@ -174,9 +175,9 @@ export default function SessionHistoryScreen() {
           </View>
         ) : (
           sessionsArray.map((session, index) => {
-            const clientInfo = CLIENT_NAMES[session.therapy_type] || {
-              name: `Client ${index + 1}`,
-              type: session.therapy_type,
+            const clientInfo = {
+              name: session.client_name || `Client ${index + 1}`,
+              type: session.therapy_type || 'General Therapy',
             };
             const priority = session.progress >= 75 ? 'High' : session.progress >= 50 ? 'Medium' : 'Low';
             const isCompleted = session.status === 'Completed';
@@ -201,7 +202,10 @@ export default function SessionHistoryScreen() {
 
                   {/* Actions */}
                   <View style={styles.sessionActions}>
-                    <TouchableOpacity style={styles.viewDetailsBtn}>
+                      <TouchableOpacity 
+                        style={styles.viewDetailsBtn}
+                        onPress={() => setSelectedSession(session)}
+                      >
                       <Text style={styles.viewDetailsBtnText}>View Details</Text>
                     </TouchableOpacity>
                     {!isCompleted && session.status === 'Scheduled' && (
@@ -235,6 +239,77 @@ export default function SessionHistoryScreen() {
           })
         )}
       </ScrollView>
+
+      {/* View Session Details Modal */}
+      <Modal
+        visible={!!selectedSession}
+        onClose={() => setSelectedSession(null)}
+        title="Session Details"
+      >
+        {selectedSession && (
+          <View style={{ gap: 12 }}>
+            <View>
+              <Text style={{ fontSize: 13, color: '#64748b' }}>Client Name</Text>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: '#030213' }}>
+                {selectedSession.client_name || 'Unknown Client'}
+              </Text>
+            </View>
+            <View>
+              <Text style={{ fontSize: 13, color: '#64748b' }}>Therapy Type</Text>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: '#030213' }}>
+                {selectedSession.therapy_type}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <View>
+                <Text style={{ fontSize: 13, color: '#64748b' }}>Date</Text>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: '#030213' }}>
+                  {selectedSession.date}
+                </Text>
+              </View>
+              <View>
+                <Text style={{ fontSize: 13, color: '#64748b' }}>Time</Text>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: '#030213' }}>
+                  {selectedSession.time}
+                </Text>
+              </View>
+              <View>
+                <Text style={{ fontSize: 13, color: '#64748b' }}>Duration</Text>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: '#030213' }}>
+                  {selectedSession.duration}
+                </Text>
+              </View>
+            </View>
+            <View>
+              <Text style={{ fontSize: 13, color: '#64748b' }}>Status</Text>
+              <Text style={{ 
+                fontSize: 16, 
+                fontWeight: '600', 
+                color: selectedSession.status === 'Completed' ? '#10b981' : 
+                       selectedSession.status === 'In Progress' ? '#3b82f6' : 
+                       selectedSession.status === 'Cancelled' ? '#ef4444' : '#f59e0b'
+              }}>
+                {selectedSession.status}
+              </Text>
+            </View>
+            {selectedSession.notes && (
+              <View>
+                <Text style={{ fontSize: 13, color: '#64748b' }}>Notes</Text>
+                <Text style={{ fontSize: 14, color: '#030213', marginTop: 4 }}>
+                  {selectedSession.notes}
+                </Text>
+              </View>
+            )}
+            <View style={{ marginTop: 20 }}>
+              <Button
+                title="Close"
+                variant="outline"
+                onPress={() => setSelectedSession(null)}
+              />
+            </View>
+          </View>
+        )}
+      </Modal>
 
       {/* Add Session Modal */}
       <Modal

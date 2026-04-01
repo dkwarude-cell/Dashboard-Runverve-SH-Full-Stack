@@ -50,10 +50,25 @@ export async function sendAIMessage(
   context?: string
 ): Promise<AIResponse> {
   if (!OPENROUTER_API_KEY) {
-    return {
-      message: '',
-      error: 'OpenRouter API key not configured. Add EXPO_PUBLIC_OPENROUTER_API_KEY to your .env file.',
-    };
+    // Return a simulated mock response if there's no API key
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const lastMessage = messages[messages.length - 1];
+        let mockReply = "I am a simulated AI assistant because you haven't set up the `EXPO_PUBLIC_OPENROUTER_API_KEY` in your `.env` file yet.\n\n";
+        
+        if (lastMessage.content.toLowerCase().includes('therapy')) {
+          mockReply += "Based on the client's profile, I suggest beginning with a 30-minute Ultrasound Therapy session targeting the affected muscle group, followed by lightly graded exercises. We should monitor their adherence closely over the next 3 weeks.";
+        } else if (lastMessage.content.toLowerCase().includes('summary') || lastMessage.content.toLowerCase().includes('client')) {
+          mockReply += "Looking at the dashboard context, the majority of your clients are making steady progress. The average adherence rate is around 85%. I recommend reviewing the recent 'In Progress' sessions for any signs of discomfort.";
+        } else if (lastMessage.content.toLowerCase().includes('risk')) {
+          mockReply += "I've analyzed the recent dropout rates and schedule anomalies. There are a couple of clients showing declining adherence who might be at high risk for prolonged recovery timelines. Let's schedule a follow-up call with them.";
+        } else {
+          mockReply += `I understand you asked: "${lastMessage.content}".\n\nIf you connect a real OpenRouter API key, I can analyze the exact clinical contexts and device setups to give you evidence-based recommendations. For now, try asking me about "therapy", "client summaries", or "risk assessment" to see my mock clinical capabilities!`;
+        }
+
+        resolve({ message: mockReply });
+      }, 1500); // 1.5s simulated network delay
+    });
   }
 
   const systemMessages: AIMessage[] = [
@@ -77,7 +92,7 @@ export async function sendAIMessage(
         'X-Title': 'SmartHeal Dashboard',
       },
       body: JSON.stringify({
-        model: 'anthropic/claude-sonnet-4',
+        model: 'google/gemini-2.0-flash-lite-001',
         messages: [...systemMessages, ...messages],
         max_tokens: 1024,
         temperature: 0.7,

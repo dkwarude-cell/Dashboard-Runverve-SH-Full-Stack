@@ -13,16 +13,19 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
  */
 export default {
   development: {
-    client: 'better-sqlite3',
+    client: 'pg',
     connection: {
-      filename: path.join(__dirname, 'smartheal.db'),
+      host: process.env.DB_HOST || 'localhost',
+      port: process.env.DB_PORT || 5432,
+      user: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres123',
+      database: process.env.DB_NAME || 'smartheal_db',
     },
     migrations: {
       directory: path.join(__dirname, 'src/migrations'),
       extension: 'js',
     },
-    useNullAsDefault: true,
-    pool: { min: 1, max: 1 },
+    pool: { min: 2, max: 10 },
   },
   production: {
     client: 'pg',

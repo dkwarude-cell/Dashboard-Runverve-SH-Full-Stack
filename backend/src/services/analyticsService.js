@@ -4,7 +4,7 @@
  * Mirrors frontend logic but operates server-side on persistent data
  */
 
-import db from '../config/db.js';
+import { db } from '../config/db.js';
 
 /**
  * Get comprehensive analytics dashboard data
@@ -59,7 +59,7 @@ export async function getClientStatistics() {
   // Active clients (had session in last 30 days)
   const active = await db('clients')
     .count('id as count')
-    .whereRaw('last_session_date > datetime("now", "-30 days")')
+    .whereRaw("last_session_date > NOW() - INTERVAL '30 days'")
     .first();
 
   // By diagnosis
@@ -133,7 +133,7 @@ export async function getSessionStatistics() {
   // This month sessions
   const thisMonth = await db('sessions')
     .count('id as count')
-    .whereRaw('session_datetime > datetime("now", "-30 days")')
+    .whereRaw("session_datetime > NOW() - INTERVAL '30 days'")
     .first();
 
   // No-show rate
@@ -393,7 +393,7 @@ export async function getRiskAssessment() {
 
   const noRecentSession = await db('clients')
     .count('id as count')
-    .whereRaw('last_session_date < datetime("now", "-21 days")')
+    .whereRaw("last_session_date < NOW() - INTERVAL '21 days'")
     .first();
 
   return {

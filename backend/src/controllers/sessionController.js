@@ -248,3 +248,26 @@ export default {
   getTherapistSessions,
   getSessionStats,
 };
+
+/**
+ * @route GET /api/v1/sessions
+ * @desc Get all sessions (Admin)
+ * @access Private/Admin
+ */
+export const getAllSessions = async (req, res, next) => {
+  try {
+    const limit = parseInt(req.query.limit) || 50;
+    const offset = parseInt(req.query.offset) || 0;
+    const status = req.query.status || null;
+
+    const result = await sessionService.getAllSessions(limit, offset, status);
+
+    res.json({
+      success: true,
+      message: 'Sessions retrieved successfully',
+      data: result
+    });
+  } catch (error) {
+    next(error);
+  }
+};

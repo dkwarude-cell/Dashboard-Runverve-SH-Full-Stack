@@ -9,6 +9,9 @@ const router = express.Router();
  * Session Routes
  */
 
+// Get all sessions
+router.get('/', verifyFirebaseJWT, requireRole('admin', 'support'), sessionController.getAllSessions);
+
 // Create session
 router.post('/', verifyFirebaseJWT, requireRole('admin', 'therapist'), sessionController.createSession);
 

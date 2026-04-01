@@ -5,13 +5,13 @@
   "description": "Production-grade backend for SmartHeal Dashboard",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
+    "start": "node --env-file=.env src/server.js",
+    "dev": "nodemon --env-file=.env src/server.js",
     "migrate:latest": "knex migrate:latest --env development",
     "migrate:rollback": "knex migrate:rollback --env development",
     "migrate:make": "knex migrate:make",
     "seed": "knex seed:run --env development",
-    "seed:data": "node scripts/seed.js",
+    "seed:data": "node --env-file=.env scripts/seed.js",
     "lint": "eslint src/",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
@@ -35,7 +35,7 @@
     "joi": "^17.11.0",
     "knex": "^3.1.0",
     "morgan": "^1.10.0",
-    "pg": "^8.11.3",
+    "pg": "^8.20.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
