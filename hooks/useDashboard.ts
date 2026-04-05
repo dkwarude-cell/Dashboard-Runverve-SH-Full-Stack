@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { DashboardStats, MonthlySessionData } from '@/types';
 
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
 const MOCK_TOKEN = 'Bearer mock-token-dev';
 
 export function useDashboard() {
@@ -147,3 +147,4 @@ export function useDashboard() {
     },
   };
 }
+

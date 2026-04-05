@@ -7,7 +7,7 @@ import {
   type ClientRisk,
 } from '@/lib/analytics';
 
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
 const MOCK_TOKEN = 'Bearer mock-token-dev';
 
 export function useAnalytics() {
@@ -162,3 +162,4 @@ export function useAnalytics() {
     // Loading and refreshtchAnalytics,
   };
 }
+
