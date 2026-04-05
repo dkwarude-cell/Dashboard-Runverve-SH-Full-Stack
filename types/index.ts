@@ -30,6 +30,8 @@ export interface DashboardStats {
   active_sessions: number;
   completion_rate: number;
   total_devices: number;
+  pain_reduction?: number;
+  this_week_hours?: number;
 }
 
 // Chart data types

@@ -40,13 +40,13 @@ export function useAnalytics() {
 
       // Backend returns processed analytics data
       // Format for UI consumption
-
+      
       // Set client stats from backend data
       if (data.clientStats) {
         setClientStats({
           totalClients: data.clientStats.total,
           activeClients: data.clientStats.activeThisMonth,
-          byProfileType: data.clientStats.byDiagnosis || [],
+          byProfileType: data.clientStats.byDiagnosis || {},
           atRiskPercentage: data.clientStats.atRiskPercentage || 0,
         });
       }
@@ -61,21 +61,21 @@ export function useAnalytics() {
         });
       }
 
-      // Set therapy outcomes (map from array instead of object)
-      if (data.therapyOutcomes && Array.isArray(data.therapyOutcomes.progressTrends)) {
+      // Set therapy outcomes
+      if (data.therapyOutcomes) {
         setTherapyOutcomes(
-          data.therapyOutcomes.progressTrends.map((trend: any) => ({
-            label: trend.category,
-            values: [{ value: trend.count, color: '#10b981' }],
+          Object.entries(data.therapyOutcomes.progressTrends || {}).map(([label, value]: any) => ({
+            label,
+            values: [{ value, color: '#10b981' }],
           }))
         );
       }
 
       // Set growth data (6-month trends)
-      if (data.monthlyGrowth && Array.isArray(data.monthlyGrowth.trend)) {
+      if (data.monthlyGrowth && Array.isArray(data.monthlyGrowth)) {
         setGrowthData(
-          data.monthlyGrowth.trend.map((month: any) => ({
-            label: month.label || String(month.month),
+          data.monthlyGrowth.map((month: any) => ({
+            label: month.month,
             values: [
               { value: month.newClientsAdded, color: '#10b981', label: 'New Clients' },
               { value: month.totalSessions, color: '#3b82f6', label: 'Sessions' },
@@ -109,24 +109,24 @@ export function useAnalytics() {
       }
 
       // Set client distribution (by diagnosis)
-      if (data.clientStats && Array.isArray(data.clientStats.byDiagnosis)) {
+      if (data.clientStats && data.clientStats.byDiagnosis) {
         const colors = ['#e84d6a', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
         setClientDistribution(
-          data.clientStats.byDiagnosis.map((item: any, i: number) => ({
-            label: item.diagnosis || 'Unknown',
-            value: item.count,
+          Object.entries(data.clientStats.byDiagnosis).map(([label, value]: any, i) => ({
+            label,
+            value,
             color: colors[i % colors.length],
           }))
         );
       }
 
       // Set session trends
-      if (data.sessionStats && Array.isArray(data.sessionStats.byStatus)) {
+      if (data.sessionStats && data.sessionStats.byStatus) {
         const colors = ['#e84d6a', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
         setSessionTrends(
-          data.sessionStats.byStatus.map((item: any, i: number) => ({
-            label: (item.status || 'unknown').replace('_', ' '),
-            values: [{ value: item.count, color: colors[i % colors.length], label: item.status }],
+          Object.entries(data.sessionStats.byStatus).map(([label, value]: any, i) => ({
+            label,
+            values: [{ value, color: colors[i % colors.length], label }],
           }))
         );
       }
@@ -145,20 +145,20 @@ export function useAnalytics() {
   }, [fetchAnalytics]);
 
   return {
+    clientDistribution,
+    sessionTrends,
     // Chart data
     clientDistribution,
     sessionTrends,
     therapyOutcomes,
     growthData,
-
+    
     // Calculated statistics
     clientStats,
     sessionStats,
     therapistPerformance,
     riskClients,
-
-    // Loading and refresh
-    loading,
-    refresh: fetchAnalytics,
+    
+    // Loading and refreshtchAnalytics,
   };
 }
