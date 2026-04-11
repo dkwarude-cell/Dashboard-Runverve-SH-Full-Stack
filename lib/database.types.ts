@@ -149,7 +149,7 @@ export type Database = {
           client_id: string;
           assigned_to: string | null;
           priority: 'Critical' | 'High' | 'Medium' | 'Low';
-          status: 'New' | 'Open' | 'In Progress' | 'Closed';
+          status: 'New' | 'Open' | 'In Progress' | 'Closed' | 'Solved';
           support_id: string;
           device_info: string | null;
           created_at: string;
@@ -162,7 +162,7 @@ export type Database = {
           client_id: string;
           assigned_to?: string | null;
           priority?: 'Critical' | 'High' | 'Medium' | 'Low';
-          status?: 'New' | 'Open' | 'In Progress' | 'Closed';
+          status?: 'New' | 'Open' | 'In Progress' | 'Closed' | 'Solved';
           support_id?: string;
           device_info?: string | null;
           created_at?: string;
@@ -175,7 +175,7 @@ export type Database = {
           client_id?: string;
           assigned_to?: string | null;
           priority?: 'Critical' | 'High' | 'Medium' | 'Low';
-          status?: 'New' | 'Open' | 'In Progress' | 'Closed';
+          status?: 'New' | 'Open' | 'In Progress' | 'Closed' | 'Solved';
           support_id?: string;
           device_info?: string | null;
           created_at?: string;

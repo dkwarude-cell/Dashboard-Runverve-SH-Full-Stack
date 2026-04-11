@@ -23,8 +23,24 @@ export function useClients() {
       if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
       const { data } = await response.json();
       // Backend returns { data: clients[], total, limit, offset }
-      const clientsArray = Array.isArray(data) ? data : (data?.data || []);
-      setClients(clientsArray);
+      const raw = Array.isArray(data) ? data : (data?.data || []);
+      const mapped = raw.map((c: any) => ({
+        id: c.id,
+        name: c.name || [c.first_name, c.last_name].filter(Boolean).join(' ') || 'Unknown Client',
+        email: c.email || '',
+        phone: c.phone || c.emergency_contact_phone || '+1 (555) 000-0000',
+        avatar_color: c.avatar_color || '#10b981',
+        progress: c.total_sessions ? Math.round((c.completed_sessions / c.total_sessions) * 100) : 0,
+        sessions: c.completed_sessions || 0,
+        adherence: c.total_sessions ? Math.round((c.completed_sessions / c.total_sessions) * 100) : 0,
+        last_active: c.last_session_date ? new Date(c.last_session_date).toLocaleDateString() : 'Never',
+        change: c.risk_score ? Math.round(parseFloat(c.risk_score) * 2) : 0,
+        status: 'Active',
+        profile_type: c.diagnosis || 'General Profile',
+        therapist_id: c.assigned_therapist_id || null,
+        notes: c.medical_history || null,
+      }));
+      setClients(mapped as any);
     } catch (err: any) {
       setError(err.message);
       console.error('Error fetching clients:', err);
@@ -111,8 +127,24 @@ export function useClients() {
       if (!response.ok) throw new Error(`Failed to search: ${response.status}`);
       const { data } = await response.json();
       // Backend returns { data: clients[], total, limit, offset }
-      const clientsArray = Array.isArray(data) ? data : (data?.data || []);
-      setClients(clientsArray);
+      const raw = Array.isArray(data) ? data : (data?.data || []);
+      const mapped = raw.map((c: any) => ({
+        id: c.id,
+        name: c.name || [c.first_name, c.last_name].filter(Boolean).join(' ') || 'Unknown Client',
+        email: c.email || '',
+        phone: c.phone || c.emergency_contact_phone || '+1 (555) 000-0000',
+        avatar_color: c.avatar_color || '#10b981',
+        progress: c.total_sessions ? Math.round((c.completed_sessions / c.total_sessions) * 100) : 0,
+        sessions: c.completed_sessions || 0,
+        adherence: c.total_sessions ? Math.round((c.completed_sessions / c.total_sessions) * 100) : 0,
+        last_active: c.last_session_date ? new Date(c.last_session_date).toLocaleDateString() : 'Never',
+        change: c.risk_score ? Math.round(parseFloat(c.risk_score) * 2) : 0,
+        status: 'Active',
+        profile_type: c.diagnosis || 'General Profile',
+        therapist_id: c.assigned_therapist_id || null,
+        notes: c.medical_history || null,
+      }));
+      setClients(mapped as any);
     } catch (err: any) {
       console.error('Error searching clients:', err);
       setClients([]);

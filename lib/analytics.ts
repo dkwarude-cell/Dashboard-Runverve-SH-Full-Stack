@@ -158,7 +158,7 @@ export function calculateTherapyOutcomes(sessions: any[]): TherapyOutcomeStats[]
     return acc;
   }, {} as Record<string, any>);
 
-  return Object.entries(outcomesByType).map(([type, data]) => ({
+  return Object.entries(outcomesByType).map(([type, data]: [string, any]) => ({
     therapyType: type,
     avgProgress: Math.round(data.total / data.count),
     sessionsCount: data.count,

@@ -44,38 +44,41 @@ export function useAnalytics() {
       // Set client stats from backend data
       if (data.clientStats) {
         setClientStats({
-          totalClients: data.clientStats.total,
-          activeClients: data.clientStats.activeThisMonth,
+          total: data.clientStats.total || 0,
+          active: data.clientStats.activeThisMonth || 0,
+          inactive: data.clientStats.inactiveThisMonth || 0,
+          avgProgress: 0,
+          avgAdherence: 0,
           byProfileType: data.clientStats.byDiagnosis || {},
-          atRiskPercentage: data.clientStats.atRiskPercentage || 0,
-        });
+        } as any);
       }
 
       // Set session stats
       if (data.sessionStats) {
         setSessionStats({
-          totalSessions: data.sessionStats.total,
-          completedSessions: data.sessionStats.completionRate,
-          avgDuration: data.sessionStats.avgDuration,
-          completionRate: data.sessionStats.completionRate,
-        });
+          total: data.sessionStats.total || 0,
+          completed: data.sessionStats.thisMonthSessions || 0,
+          scheduled: 0,
+          cancelled: 0,
+          completionRate: parseFloat(data.sessionStats.completionRate) || 0,
+        } as any);
       }
 
       // Set therapy outcomes
-      if (data.therapyOutcomes) {
+      if (data.therapyOutcomes && Array.isArray(data.therapyOutcomes.progressTrends)) {
         setTherapyOutcomes(
-          Object.entries(data.therapyOutcomes.progressTrends || {}).map(([label, value]: any) => ({
-            label,
-            values: [{ value, color: '#10b981' }],
+          data.therapyOutcomes.progressTrends.map((item: any) => ({
+            label: item.category,
+            values: [{ value: item.count, color: '#10b981' }],
           }))
         );
       }
 
       // Set growth data (6-month trends)
-      if (data.monthlyGrowth && Array.isArray(data.monthlyGrowth)) {
+      if (data.monthlyGrowth && Array.isArray(data.monthlyGrowth.trend)) {
         setGrowthData(
-          data.monthlyGrowth.map((month: any) => ({
-            label: month.month,
+          data.monthlyGrowth.trend.map((month: any) => ({
+            label: month.label,
             values: [
               { value: month.newClientsAdded, color: '#10b981', label: 'New Clients' },
               { value: month.totalSessions, color: '#3b82f6', label: 'Sessions' },
@@ -109,24 +112,24 @@ export function useAnalytics() {
       }
 
       // Set client distribution (by diagnosis)
-      if (data.clientStats && data.clientStats.byDiagnosis) {
+      if (data.clientStats && Array.isArray(data.clientStats.byDiagnosis)) {
         const colors = ['#e84d6a', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
         setClientDistribution(
-          Object.entries(data.clientStats.byDiagnosis).map(([label, value]: any, i) => ({
-            label,
-            value,
+          data.clientStats.byDiagnosis.map((item: any, i: number) => ({
+            label: item.diagnosis,
+            value: item.count,
             color: colors[i % colors.length],
           }))
         );
       }
 
       // Set session trends
-      if (data.sessionStats && data.sessionStats.byStatus) {
+      if (data.sessionStats && Array.isArray(data.sessionStats.byStatus)) {
         const colors = ['#e84d6a', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
         setSessionTrends(
-          Object.entries(data.sessionStats.byStatus).map(([label, value]: any, i) => ({
-            label,
-            values: [{ value, color: colors[i % colors.length], label }],
+          data.sessionStats.byStatus.map((item: any, i: number) => ({
+            label: item.status,
+            values: [{ value: item.count, color: colors[i % colors.length], label: item.status }],
           }))
         );
       }
@@ -147,19 +150,14 @@ export function useAnalytics() {
   return {
     clientDistribution,
     sessionTrends,
-    // Chart data
-    clientDistribution,
-    sessionTrends,
     therapyOutcomes,
     growthData,
-    
-    // Calculated statistics
-    clientStats,
-    sessionStats,
+    clientStats: clientStats as any,
+    sessionStats: sessionStats as any,
     therapistPerformance,
     riskClients,
-    
-    // Loading and refreshtchAnalytics,
+    loading,
+    refresh: fetchAnalytics,
   };
 }
 
